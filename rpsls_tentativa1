@@ -1,0 +1,79 @@
+#http://www.codeskulptor.org/#user10_vQljxdxwsj_0.py
+	
+# Rock-paper-scissors-lizard-Spock template
+
+# The key idea of this program is to equate the strings
+# "rock", "paper", "scissors", "lizard", "Spock" to numbers
+# as follows:
+#
+# 0 - rock
+# 1 - Spock
+# 2 - paper
+# 3 - lizard
+# 4 - scissors
+
+# helper functions
+import random
+
+def number_to_name(number):
+    # fill in your code below
+       a=["rock","Spock","paper","lizard","scissors"]
+       if number ==0:
+            return a[0]
+       elif number==1:
+            return a[1]
+       elif number==2:
+            return a[2]
+       elif number==3:
+            return a[3]
+       elif number==4:
+            return a[4]
+       else:
+         return "Not a valid choice. Please choose 0 to 4 value"  
+  
+def name_to_number(name):
+    # fill in your code below
+        a=["rock","Spock","paper","lizard","scissors"]
+    # convert name to number using if/elif/else
+    # don't forget to return the result!
+        if str.upper(name)==str.upper(a[0]):
+            return 0
+        elif str.upper(name)==str.upper(a[1]):
+            return 1
+        elif str.upper(name)==str.upper(a[2]):
+            return 2
+        elif str.upper(name)==str.upper(a[3]):
+            return 3
+        elif str.upper(name)==str.upper(a[4]):
+            return 4
+        else:
+            return "Not a valid choice." 
+
+def rpsls(name): 
+    # fill in your code below
+
+    # convert name to player_number using name_to_number
+	player_number=name_to_number(name)
+	print "Player chooses ",name
+    # compute random guess for comp_number using random.randrange()
+	comp_number=random.randrange(0,5)
+	print "Computer chooses ",name
+    # compute difference of player_number and comp_number modulo five
+
+	# use if/elif/else to determine winner
+
+    # convert comp_number to name using number_to_name
+    
+    # print results
+
+    
+# test your code
+rpsls("rock")
+rpsls("Spock")
+rpsls("paper")
+rpsls("lizard")
+rpsls("scissors")
+
+# always remember to check your completed program against the grading rubric
+
+
