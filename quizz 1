@@ -1,0 +1,55 @@
+# CodeSkulptor runs Python programs in your browser.
+# Click the upper left button to run this simple demo.
+
+#
+
+# Problemas do Quiz 1 do curso Interactive programming with python
+
+import simplegui
+import math
+import random
+
+def future_value(present_value, annual_rate, periods_per_year, years):
+    rate_per_period = annual_rate / periods_per_year
+    periods = periods_per_year * years
+    
+    # Put your code here.
+
+    fv= present_value*(1+rate_per_period)**periods
+    return fv
+    
+    
+#print "$1000 at 2% compounded daily for 3 years yields $", future_value(1000, .02, 365, 3)
+print future_value(1000, .02, 365, 3)
+
+def area_pol(nl, cl):
+    #calcula o àrea de um poligono regular
+    #dado um numero de lados, nl e o comprimento de cada lado, cl
+    
+    ap=(0.25*nl*cl**2)/(math.tan(math.pi/nl))
+    return ap
+
+print area_pol(7,3)
+
+def project_to_distance(point_x,point_y, distance):
+    dist_to_origin = math.sqrt(point_x ** 2 + point_y ** 2)
+    scale = distance / dist_to_origin
+    return point_x * scale, point_y * scale
+    
+print project_to_distance(2, 7, 4)
+
+print random.randint(0, 10)
+print random.randrange(0, 10)
+
+#Q3
+n=123.4
+print "Q3"
+print (n / 10) % 10
+print (n // 10) % 10
+print (n % 100 - n % 10) / 10
+
+#Q5
+
+def f(x):
+    return -5*x**5 + 69*x**2 - 47
+print "Q5",f(0),f(1),f(2),f(3)
