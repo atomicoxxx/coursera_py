@@ -1,0 +1,76 @@
+# template for "Guess the number" mini-project
+# input will come from buttons and an input field
+# all output for the game will be printed in the console
+
+import simplegui
+import random
+import math
+
+# initialize global variables used in your code
+#Here i'll initialize the default for a game between 0 and 100
+compnumber=random.randrange(0,100)
+numtries=7
+uplimit=100
+
+def start_game(mx):
+    #Starts a new game, with mx beeing the max limit
+    global numtries
+    global uplimit
+    global compnumber
+#Variable initialization
+    uplimit=mx
+    #minimum number of guesses in binary search is log2(n) beeing n the number of elements to search, rounded to nearest integer
+    numtries=math.ceil(math.log(mx, 2))
+    #Secret number
+    compnumber=random.randrange(0,mx)
+#Print values
+    print " "
+    print "New game. Range is 0 - ",uplimit
+    print "You have ", numtries, " remaining guesses."
+    
+    
+# define event handlers for control panel
+# I'll use only one definition for handling range buttons
+
+def range100():
+    # button that changes range to range [0,100) and restarts
+    start_game(100)
+    
+def range1000():
+    # button that changes range to range [0,100) and restarts
+    start_game(1000)  
+
+def get_input(guess):
+    # main game logic goes here  
+    global numtries
+   # global compnumber=random.randrange(0,uplimit)
+    guess=int(guess)
+    print ""
+    print "your guess is ",guess 
+    
+    if numtries>0:
+        if guess==compnumber:
+            print "Congratulations! You guess the number ", compnumber
+            start_game(uplimit)
+        elif guess>compnumber:
+            print "Bad luck. Your guess is Higher than secret number"
+            numtries=numtries-1
+            print "You have more ", numtries, " tries"
+        else:
+            print "Bad luck. Your guess is lower than secret number."
+            numtries=numtries-1
+            print "You have more ", numtries, " tries"
+    else:
+        print "Bad luck! You runned out of tries! Secret number is ", compnumber
+    
+# create frame
+myframe=simplegui.create_frame("Guess the Number",200,200)
+
+# register event handlers for control elements
+myframe.add_button("[0-100) Range",range100,150)
+myframe.add_button("[0-1000) Range",range1000,150)
+myframe.add_input("Enter your guess: ",get_input,100)
+
+#Start a game
+start_game(100)
+myframe.start()
