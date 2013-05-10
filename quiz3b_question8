@@ -1,0 +1,56 @@
+# Quiz 3b - Question 8
+
+import simplegui
+import time
+import math
+
+
+# global state
+
+result = 1
+iteration = 0
+max_num = 0
+
+# helper functions
+
+def init(start):
+    """Initializes n."""
+    global n, result
+    n = start
+    result=n
+    print "Input is", n
+    
+def get_next(current):
+    #Verificar se é numero par e aplicar a regra de série. 
+    global max_num
+    if current%2==0:
+        res=current/2
+    else:
+        res=current*3+1
+    return res
+
+# timer callback
+
+def update():
+    """???  Part of mystery computation."""
+    global iteration, result, max_num
+    iteration += 1
+    # Stop iterating after max_iterations
+    if result >1:
+        print result
+        if result>max_num: 
+            max_num=result
+        
+        result = get_next(result)
+    else:
+        timer.stop()
+        print "Output is", result
+        print "Maximo is ", max_num
+
+# register event handlers
+
+timer = simplegui.create_timer(10, update)
+
+# start program
+init(217)
+timer.start()
