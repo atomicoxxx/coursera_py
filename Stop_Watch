@@ -1,0 +1,88 @@
+# template for "Stopwatch: The Game"
+#Can get and test it here: http://www.codeskulptor.org/#user12_bekpAr6K19_3.py
+import simplegui
+
+# define global variables
+tempo=0
+font_height=20
+font_color="white"
+frame_height=200
+frame_width=200
+wins=0
+plays=0
+tsplay=0
+Running=False
+
+# define helper function format that converts time
+# in tenths of seconds into formatted string A:BC.D
+def format(n):
+    #formats numer to m:ss:d time
+    #and updates tensof seconds
+    global tsplay
+    a = n // 600
+    b = n % 600 // 100
+    c = (n % 600) % 100 // 10
+    d = n % 10
+   
+    if d==0:
+        tsplay=1 #this variable will be used to determine if player scored
+    else:
+        tsplay=0
+        
+    return "%d:%d%d.%d" % (a, b, c, d)
+    
+# define event handlers for buttons; "Start", "Stop", "Reset"
+def start_handler():
+    global Running
+    Running=True
+    timer.start()
+    
+def stop_handler():
+    global plays, wins, Running
+    
+    if (Running==True):
+        timer.stop()
+        wins=wins+tsplay
+        plays=plays+1
+        Running=False
+     
+
+def reset_handler():
+    global tempo
+    #resets status of game. Not specified in conditions
+    global plays, wins, Running
+    timer.stop()
+    tempo=0
+    plays=0
+    wins=0
+    Running=False
+
+# define event handler for timer with 0.1 sec interval
+def time_handler():
+    global tempo
+    tempo=tempo+1
+           
+# define draw handler
+def draw(canvas):
+    #Centering the text
+    canvasy=frame_height//2
+    canvasx=(frame_width-len(format(tempo))*font_height)
+    #draw on canvas
+    canvas.draw_text(format(tempo),[canvasx,canvasy],font_height, font_color)
+    canvas.draw_text("Wins : "+str(wins)+" / Plays : "+str(plays),[20,20],15,"red")
+    
+# create frame
+frame=simplegui.create_frame("Stop the watch",frame_height,frame_width)
+
+# register event handlers
+timer=simplegui.create_timer(100,time_handler)
+frame.set_draw_handler(draw)
+button_start = frame.add_button("Start", start_handler,50)
+button_stop = frame.add_button("Stop", stop_handler,50)
+button_reset= frame.add_button("Reset", reset_handler,50)
+
+# start frame
+frame.start()
+
+
+# Please remember to review the grading rubric
