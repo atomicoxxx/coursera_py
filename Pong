@@ -1,5 +1,4 @@
 # Implementation of classic arcade game Pong
-# This is not the final version, yet.
 
 import simplegui
 import random
@@ -19,7 +18,7 @@ HALF_PAD_HEIGHT = PAD_HEIGHT / 2
 def ball_init(right):
     global ball_pos, ball_vel # these are vectors stored as lists
     ball_pos=[WIDTH / 2,HEIGHT / 2]
-    ball_vel=[0,0]
+    ball_vel=[1,2]
 
 # define event handlers
 
@@ -32,9 +31,7 @@ def new_game():
     paddle2_pos=[WIDTH-HALF_PAD_WIDTH,(HEIGHT-PAD_HEIGHT)//2]
     paddle1_vel=0
     paddle2_vel=0
-    ball_init(random.randrange(-1,2))
-    #print paddle1_pos[0],paddle1_pos[1],paddle2_pos
-    
+    ball_init(random.randrange(-1,2))       
     
 def draw(c):
     global score1, score2, paddle1_pos, paddle2_pos, ball_pos, ball_vel
@@ -42,6 +39,18 @@ def draw(c):
     # update paddle's vertical position, keep paddle on the screen
     paddle1_pos[1]=paddle1_pos[1]+paddle1_vel
     paddle2_pos[1]=paddle2_pos[1]+paddle2_vel
+    #Control if reach top orbottom of canvas
+    if paddle1_pos[1]<=0:
+       paddle1_pos[1]=0
+ 
+    if paddle1_pos[1]>=HEIGHT-PAD_HEIGHT:
+       paddle1_pos[1]=HEIGHT-PAD_HEIGHT
+ 
+    if paddle2_pos[1]<=0:
+       paddle2_pos[1]=0
+ 
+    if paddle2_pos[1]>=HEIGHT-PAD_HEIGHT:
+       paddle2_pos[1]=HEIGHT-PAD_HEIGHT
     # draw mid line and gutters
     c.draw_line([WIDTH / 2, 0],[WIDTH / 2, HEIGHT], 1, "White")
     c.draw_line([PAD_WIDTH, 0],[PAD_WIDTH, HEIGHT], 1, "White")
@@ -55,12 +64,17 @@ def draw(c):
     ball_pos[0]=ball_pos[0]+ball_vel[0]
     ball_pos[1]=ball_pos[1]+ball_vel[1]
     
+    #Control if ball reaches bottom or top of canvas
+    if ball_pos[1] in [BALL_RADIUS,HEIGHT-BALL_RADIUS]:
+        ball_vel[1]=-ball_vel[1]
+    
+    
     # draw ball and scores
     c.draw_circle(ball_pos, BALL_RADIUS, 1, "White", "White")
     # Score Player Left (1)
-    c.draw_text(str(score1),(260,20),12,"Red")
+    c.draw_text(str(score1),(260,20),20,"Red")
     # Score Player Right (2)
-    c.draw_text(str(score2),(320,20),12,"Red")
+    c.draw_text(str(score2),(340,20),20,"Red")
     
 def keydown(key):
     global paddle1_vel, paddle2_vel
