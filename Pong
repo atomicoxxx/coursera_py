@@ -18,7 +18,7 @@ HALF_PAD_HEIGHT = PAD_HEIGHT / 2
 def ball_init(right):
     global ball_pos, ball_vel # these are vectors stored as lists
     ball_pos=[WIDTH / 2,HEIGHT / 2]
-    ball_vel=[1,2]
+    ball_vel=[2,2]
 
 # define event handlers
 
@@ -71,21 +71,31 @@ def draw(c):
     if ball_pos[1]>=HEIGHT-BALL_RADIUS:
         ball_pos[1]= HEIGHT-BALL_RADIUS
         ball_vel[1]=-ball_vel[1]
+        
     #Control if ball hits left wall (vertical line)
-	if ball_pos[0]-BALL_RADIUS<=PAD_WIDTH:
-		ball_pos[0]=PAD_WIDTH+BALL_RADIUS
-		ball_vel[0]=-ball_vel[0]
-	
-	#Control if ball hits right wall (vertical line)
-	if ball_pos[0]-BALL_RADIUS<=HEIGHT-PAD_WIDTH:
-		#Control if is on paddle
-		if ball_pos[1]<=paddle2_pos[1]-BALL_RADIUS+PAD_HEIGHT and ball_pos[1]>=paddle2_pos[1]-BALL_RADIUS:
-			ball_pos[0]=HEIGHT-PAD_WIDTH+BALL_RADIUS
-			ball_vel[0]=-ball_vel[0]*1.1
-		else:
-			ball_init(random.randrange(-1,2))
+    if ball_pos[0]-BALL_RADIUS<=PAD_WIDTH:
+        #Control if is on paddle
+        if ball_pos[1]<=paddle1_pos[1]-BALL_RADIUS+PAD_HEIGHT and ball_pos[1]>=paddle1_pos[1]-BALL_RADIUS:
+            ball_pos[0]=PAD_WIDTH+BALL_RADIUS
+			ball_vel[0]=-ball_vel[0]*1.2
+        else:
+            score2=score2+1
+            ball_init(random.randrange(-1,2))
 		
-	
+		ball_pos[0]=PAD_WIDTH+BALL_RADIUS
+        ball_vel[0]=-ball_vel[0]*1.1
+    
+    #Control if ball hits right wall (vertical line)
+    if ball_pos[0]+BALL_RADIUS>=WIDTH-PAD_WIDTH:
+        #Control if is on paddle
+        if ball_pos[1]<=paddle2_pos[1]-BALL_RADIUS+PAD_HEIGHT and ball_pos[1]>=paddle2_pos[1]-BALL_RADIUS:
+            ball_pos[0]=WIDTH-PAD_WIDTH-BALL_RADIUS
+            ball_vel[0]=-ball_vel[0]*1.1
+        else:
+            score1=score1+1
+            ball_init(random.randrange(-1,2))
+        
+    
     # draw ball and scores
     c.draw_circle(ball_pos, BALL_RADIUS, 1, "White", "White")
     # Score Player Left (1)
