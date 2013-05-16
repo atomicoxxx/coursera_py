@@ -65,10 +65,27 @@ def draw(c):
     ball_pos[1]=ball_pos[1]+ball_vel[1]
     
     #Control if ball reaches bottom or top of canvas
-    if ball_pos[1] in [BALL_RADIUS,HEIGHT-BALL_RADIUS]:
+    if ball_pos[1] <= BALL_RADIUS:
+        ball_pos[1]= BALL_RADIUS
         ball_vel[1]=-ball_vel[1]
-    
-    
+    if ball_pos[1]>=HEIGHT-BALL_RADIUS:
+        ball_pos[1]= HEIGHT-BALL_RADIUS
+        ball_vel[1]=-ball_vel[1]
+    #Control if ball hits left wall (vertical line)
+	if ball_pos[0]-BALL_RADIUS<=PAD_WIDTH:
+		ball_pos[0]=PAD_WIDTH+BALL_RADIUS
+		ball_vel[0]=-ball_vel[0]
+	
+	#Control if ball hits right wall (vertical line)
+	if ball_pos[0]-BALL_RADIUS<=HEIGHT-PAD_WIDTH:
+		#Control if is on paddle
+		if ball_pos[1]<=paddle2_pos[1]-BALL_RADIUS+PAD_HEIGHT and ball_pos[1]>=paddle2_pos[1]-BALL_RADIUS:
+			ball_pos[0]=HEIGHT-PAD_WIDTH+BALL_RADIUS
+			ball_vel[0]=-ball_vel[0]*1.1
+		else:
+			ball_init(random.randrange(-1,2))
+		
+	
     # draw ball and scores
     c.draw_circle(ball_pos, BALL_RADIUS, 1, "White", "White")
     # Score Player Left (1)
@@ -78,27 +95,29 @@ def draw(c):
     
 def keydown(key):
     global paddle1_vel, paddle2_vel
-    
+#Left player uses w - Up and s - Down
+#Right player uses up and down keys
     if key ==simplegui.KEY_MAP["down"]:
-        paddle1_vel+=4
-    elif key==simplegui.KEY_MAP["s"]:    
         paddle2_vel+=4
+    elif key==simplegui.KEY_MAP["s"]:    
+        paddle1_vel+=4
     elif key ==simplegui.KEY_MAP["up"]:
-        paddle1_vel-=4
-    elif key==simplegui.KEY_MAP["w"]:    
         paddle2_vel-=4
+    elif key==simplegui.KEY_MAP["w"]:    
+        paddle1_vel-=4
    
 def keyup(key):
     global paddle1_vel, paddle2_vel
-
+#Left player uses w - Up and s - Down
+#Right player uses up and down keys
     if key ==simplegui.KEY_MAP["down"]:
-        paddle1_vel=0
+        paddle2_vel=0
     elif key ==simplegui.KEY_MAP["s"]:    
-        paddle2_vel=0
-    elif key ==simplegui.KEY_MAP["up"]:
         paddle1_vel=0
-    elif key ==simplegui.KEY_MAP["w"]:    
+    elif key ==simplegui.KEY_MAP["up"]:
         paddle2_vel=0
+    elif key ==simplegui.KEY_MAP["w"]:    
+        paddle1_vel=0
 # create frame
 frame = simplegui.create_frame("Pong", WIDTH, HEIGHT)
 frame.set_draw_handler(draw)
