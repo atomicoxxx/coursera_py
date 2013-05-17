@@ -11,14 +11,23 @@ PAD_WIDTH = 8
 PAD_HEIGHT = 80
 HALF_PAD_WIDTH = PAD_WIDTH / 2
 HALF_PAD_HEIGHT = PAD_HEIGHT / 2
+PADDLE1_COLOR="Olive"
+PADDLE2_COLOR="Teal"
 
 # helper function that spawns a ball by updating the 
 # ball's position vector and velocity vector
 # if right is True, the ball's velocity is upper right, else upper left
 def ball_init(right):
     global ball_pos, ball_vel # these are vectors stored as lists
+    global ball_color
+    ball_color=random.choice(["White","Silver","Purple","Fuchsia","Green"])
     ball_pos=[WIDTH / 2,HEIGHT / 2]
-    ball_vel=[random.randrange(120, 240)/60,random.randrange(60, 180)/60]
+    #If right=True, start ball to right and Up (negative y in vel)
+    #If right=False, start ball to Left and Up (negative y in vel)
+    if right==True:
+        ball_vel=[random.randrange(120, 240)/60,-random.randrange(60, 180)/30]
+    else:
+        ball_vel=[-random.randrange(120, 240)/60,-random.randrange(60, 180)/30]
 
 # define event handlers
 
@@ -31,8 +40,9 @@ def new_game():
     paddle2_pos=[WIDTH-HALF_PAD_WIDTH,(HEIGHT-PAD_HEIGHT)//2]
     paddle1_vel=0
     paddle2_vel=0
-    ball_init(random.randrange(-1,2))       
+    ball_init(random.choice([True,False]))       
     
+        
 def draw(c):
     global score1, score2, paddle1_pos, paddle2_pos, ball_pos, ball_vel
  
@@ -57,8 +67,8 @@ def draw(c):
     c.draw_line([WIDTH - PAD_WIDTH, 0],[WIDTH - PAD_WIDTH, HEIGHT], 1, "White")
     
     # draw paddles
-    c.draw_line([paddle1_pos[0],paddle1_pos[1]],[paddle1_pos[0],paddle1_pos[1]+PAD_HEIGHT], PAD_WIDTH, "White")
-    c.draw_line([paddle2_pos[0],paddle2_pos[1]],[paddle2_pos[0],paddle2_pos[1]+PAD_HEIGHT], PAD_WIDTH, "White")
+    c.draw_line([paddle1_pos[0],paddle1_pos[1]],[paddle1_pos[0],paddle1_pos[1]+PAD_HEIGHT], PAD_WIDTH, PADDLE1_COLOR)
+    c.draw_line([paddle2_pos[0],paddle2_pos[1]],[paddle2_pos[0],paddle2_pos[1]+PAD_HEIGHT], PAD_WIDTH, PADDLE2_COLOR)
       
     # update ball
     ball_pos[0]=ball_pos[0]+ball_vel[0]
@@ -77,24 +87,33 @@ def draw(c):
         #Control if is on paddle
         if ball_pos[1]<=paddle1_pos[1]+PAD_HEIGHT and ball_pos[1]>=paddle1_pos[1]:
             ball_pos[0]=PAD_WIDTH+BALL_RADIUS
-            ball_vel[0]=-ball_vel[0]*1.1
+            ball_vel[0]=-ball_vel[0]*1.4
+           #Control if ball is on 1rst or 2nd half of paddle and change vertical velocity acording to it
+            if ball_pos[1]<=paddle1_pos[1]+HALF_PAD_HEIGHT: # 1rst half
+                ball_vel[1]=-ball_vel[1]*1.4
+            else:
+                ball_vel[1]=ball_vel[1]*1.4
         else:
             score2=score2+1
-            ball_init(random.randrange(-1,2))        
+            ball_init(True)        
            
     #Control if ball hits right wall (vertical line)
     if ball_pos[0]+BALL_RADIUS>=WIDTH-PAD_WIDTH:
         #Control if is on paddle
         if ball_pos[1]<=paddle2_pos[1]+PAD_HEIGHT and ball_pos[1]>=paddle2_pos[1]:
             ball_pos[0]=WIDTH-PAD_WIDTH-BALL_RADIUS
-            ball_vel[0]=-ball_vel[0]*1.1
+            ball_vel[0]=-ball_vel[0]*1.4
+             #Control if ball is on 1rst or 2nd half of paddle and change vertical velocity acording to it
+            if ball_pos[1]<=paddle2_pos[1]+HALF_PAD_HEIGHT: # 1rst half
+                ball_vel[1]=-ball_vel[1]*1.4
+            else:
+                ball_vel[1]=ball_vel[1]*1.4
         else:
             score1=score1+1
-            ball_init(random.randrange(-1,2))
+            ball_init(False)
         
-    
     # draw ball and scores
-    c.draw_circle(ball_pos, BALL_RADIUS, 1, "White", "White")
+    c.draw_circle(ball_pos, BALL_RADIUS, 1, ball_color, ball_color)
     # Score Player Left (1)
     c.draw_text(str(score1),(260,20),20,"Red")
     # Score Player Right (2)
@@ -130,6 +149,7 @@ frame = simplegui.create_frame("Pong", WIDTH, HEIGHT)
 frame.set_draw_handler(draw)
 frame.set_keydown_handler(keydown)
 frame.set_keyup_handler(keyup)
+button = frame.add_button("Restart", new_game, 150)
 
 
 # start frame
