@@ -1,5 +1,6 @@
 # implementation of card game - Memory
-# http://www.codeskulptor.org/#user4-nV7GbDCCgY-7.py
+#can be tested in codeskulptor, below
+# http://www.codeskulptor.org/#user14_LZmYkj23RV_0.py
 
 import simplegui
 import random
