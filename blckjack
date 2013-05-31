@@ -1,5 +1,5 @@
 # Mini-project #6 - Blackjack
-
+#Can be teseed here: http://www.codeskulptor.org/#user15_ssgmSNvcqx_0.py
 import simplegui
 import random
 
@@ -17,15 +17,11 @@ in_play = False
 outcome = ""
 score = 0
 
+
 # define globals for cards
 SUITS = ('C', 'S', 'H', 'D')
 RANKS = ('A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K')
 VALUES = {'A':1, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 'T':10, 'J':10, 'Q':10, 'K':10}
-
-#Define Globals for deck and Hand Players
-DECK=[]
-PLAYER=[] #Player hand
-DEALER=[] #Dealer Hand 
 
 # define card class
 class Card:
@@ -81,7 +77,8 @@ class Hand:
     
     def draw(self, canvas, pos):
         while i<len(self.handcards):
-            self.handcards[i].draw
+            poshand=(pos[0]+80,pos[1])
+            self.handcards[i].draw(canvas, poshand)
             i=i+1
         
 # define deck class 
@@ -116,34 +113,80 @@ class Deck:
 
 #define event handlers for buttons
 def deal():
-    global outcome, in_play
-	# your code goes here
-	global DECK,PLAYER,DEALER
-	
+    global outcome, in_play, score
+    # your code goes here
+    global deck,player,dealer
+    if in_play==True:
+        score=score-1
     
-    
+    deck=Deck()
+    player=Hand()
+    dealer=Hand()
+    deck.shuffle()
     in_play = True
+    
+    dealer.add_card(deck.deal_card())
+    dealer.add_card(deck.deal_card())
+    player.add_card(deck.deal_card())
+    player.add_card(deck.deal_card())
+   
+    outcome="Hit or Stand?"
+    #Debug
+    print player
+    print dealer
 
 def hit():
-    pass	# replace with your code below
- 
+    global outcome, in_play, score
     # if the hand is in play, hit the player
-   
-    # if busted, assign a message to outcome, update in_play and score
+    if in_play==True:
+        player.add_card(deck.deal_card())
+    # if busted, assign a message to outcome, update in_play and score 
+        if player.get_value()>21:
+            in_play=False
+            outcome="You loose!"
+            score=score-1
+    
+    #Debug purpose
+    #print player
+    #print player.get_value()
+
        
 def stand():
-    pass	# replace with your code below
-   
+    global outcome, in_play, score
+    
     # if hand is in play, repeatedly hit dealer until his hand has value 17 or more
+    if in_play==True:
+        while dealer.get_value()<17:
+            dealer.add_card(deck.deal_card())
+# assign a message to outcome, update in_play and score
+        in_play=False #Game ends here! No mather what happens next.
+        if dealer.get_value()>=21:
+            score=score+1
+            outcome="You win!"
+        elif dealer.get_value()<player.get_value():
+            score=score+1
+            outcome="You win!"
+        else:
+            score=score-1
+            outcome="You Loose!"
 
-    # assign a message to outcome, update in_play and score
-
+    
 # draw handler    
 def draw(canvas):
+    
     # test to make sure that card.draw works, replace with your code below
+    dealerpos=[100,200]
+    playerpos=[100,400]
+    
+    canvas.draw_text("BLACKJACK", (180, 50), 40, "Purple")
+    canvas.draw_text("Score : " + str(score), (450, 120), 30, "Red")
+    canvas.draw_text("Dealer", (50, 150), 40, "Navy")
+    canvas.draw_text("Player", (50, 350), 40, "Navy")
+    canvas.draw_text(outcome, (200, 350), 20, "Black")
     
     card = Card("S", "A")
-    card.draw(canvas, [300, 300])
+    card.draw(canvas, dealerpos)
+    card.draw(canvas, playerpos)
 
 
 # initialization frame
