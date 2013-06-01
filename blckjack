@@ -1,5 +1,5 @@
 # Mini-project #6 - Blackjack
-#Can be teseed here: http://www.codeskulptor.org/#user15_ssgmSNvcqx_0.py
+# Can be tested here: http://www.codeskulptor.org/#user15_ssgmSNvcqx_1.py
 import simplegui
 import random
 
@@ -16,7 +16,6 @@ card_back = simplegui.load_image("http://commondatastorage.googleapis.com/codesk
 in_play = False
 outcome = ""
 score = 0
-
 
 # define globals for cards
 SUITS = ('C', 'S', 'H', 'D')
@@ -75,9 +74,14 @@ class Hand:
                                        
         return v
     
+    def reset(self):
+        self.handcards=[]
+        self.value=0
+    
     def draw(self, canvas, pos):
+        i=0
         while i<len(self.handcards):
-            poshand=(pos[0]+80,pos[1])
+            poshand=(pos[0]+80*i,pos[1])
             self.handcards[i].draw(canvas, poshand)
             i=i+1
         
@@ -95,6 +99,11 @@ class Deck:
     def shuffle(self):
         return random.shuffle(self.deckcards)
         
+    def reset(self):
+        self.deckcards.extend(self.dealedcards)
+        self.shuffle()
+        self.dealedcards=[]
+        
     def deal_card(self):
         j=self.deckcards[len(self.deckcards)-1]
         self.deckcards.remove(j)
@@ -109,20 +118,18 @@ class Deck:
             i=i+1
         return s
   
-
-
 #define event handlers for buttons
 def deal():
-    global outcome, in_play, score
+    global outcome, in_play, score,backcard
     # your code goes here
-    global deck,player,dealer
     if in_play==True:
         score=score-1
+        outcome="You Loose"
+    backcard=True    
+    deck.reset()
+    player.reset()
+    dealer.reset()
     
-    deck=Deck()
-    player=Hand()
-    dealer=Hand()
-    deck.shuffle()
     in_play = True
     
     dealer.add_card(deck.deal_card())
@@ -132,8 +139,8 @@ def deal():
    
     outcome="Hit or Stand?"
     #Debug
-    print player
-    print dealer
+    #print player
+    #print dealer
 
 def hit():
     global outcome, in_play, score
@@ -143,7 +150,7 @@ def hit():
     # if busted, assign a message to outcome, update in_play and score 
         if player.get_value()>21:
             in_play=False
-            outcome="You loose!"
+            outcome="You loose!Deal again?"
             score=score-1
     
     #Debug purpose
@@ -156,39 +163,40 @@ def stand():
     
     # if hand is in play, repeatedly hit dealer until his hand has value 17 or more
     if in_play==True:
+        in_play=False #Game ends here! No mather what happens next.
         while dealer.get_value()<17:
             dealer.add_card(deck.deal_card())
-# assign a message to outcome, update in_play and score
-        in_play=False #Game ends here! No mather what happens next.
+    # assign a message to outcome, update in_play and score
         if dealer.get_value()>=21:
             score=score+1
-            outcome="You win!"
+            outcome="You win! Deal again?"
         elif dealer.get_value()<player.get_value():
             score=score+1
-            outcome="You win!"
+            outcome="You win! Deal again?"
         else:
             score=score-1
-            outcome="You Loose!"
+            outcome="You Loose! Deal again?"
 
     
 # draw handler    
 def draw(canvas):
+    global deck,player,dealer
     
-    # test to make sure that card.draw works, replace with your code below
     dealerpos=[100,200]
     playerpos=[100,400]
     
-    canvas.draw_text("BLACKJACK", (180, 50), 40, "Purple")
+    canvas.draw_text("BLACKJACK", (180, 50), 40, "Red")
     canvas.draw_text("Score : " + str(score), (450, 120), 30, "Red")
     canvas.draw_text("Dealer", (50, 150), 40, "Navy")
     canvas.draw_text("Player", (50, 350), 40, "Navy")
-    canvas.draw_text(outcome, (200, 350), 20, "Black")
+    canvas.draw_text(outcome, (200, 350), 30, "Black")
+    player.draw(canvas,playerpos)
+    dealer.draw(canvas,dealerpos)
     
-    card = Card("S", "A")
-    card.draw(canvas, dealerpos)
-    card.draw(canvas, playerpos)
-
-
+    if in_play==True:
+        canvas.draw_image(card_back, CARD_BACK_CENTER, CARD_BACK_SIZE, [dealerpos[0] + CARD_BACK_CENTER[0], dealerpos[1] + CARD_BACK_CENTER[1]], CARD_BACK_SIZE)
+    #canvas.draw_image(card_back, CARD_BACK_CENTER, CARD_BACK_SIZE, (88,249), (70, 94))
+    
 # initialization frame
 frame = simplegui.create_frame("Blackjack", 600, 600)
 frame.set_canvas_background("Green")
@@ -199,9 +207,11 @@ frame.add_button("Hit",  hit, 200)
 frame.add_button("Stand", stand, 200)
 frame.set_draw_handler(draw)
 
-
 # get things rolling
 frame.start()
-
+deck=Deck()
+player=Hand()
+dealer=Hand()
+deck.shuffle()
 
 # remember to review the gradic rubric
