@@ -12,6 +12,8 @@ time = 0.5
 started = False
 rockset=set()
 numrocks=0
+shipset=set()
+
 
 class ImageInfo:
     def __init__(self, center, size, radius = 0, lifespan = None, animated = False):
@@ -148,6 +150,12 @@ class Ship:
         missile_vel = [self.vel[0] + 6 * forward[0], self.vel[1] + 6 * forward[1]]
         a_missile = Sprite(missile_pos, missile_vel, self.angle, 0, missile_image, missile_info, missile_sound)
     
+    def get_position(self):
+    #Center is the current object position 
+        return self.pos
+        
+    def get_radius(self):
+        return self.radius
     
     
 # Sprite class
@@ -179,7 +187,23 @@ class Sprite:
         # update position
         self.pos[0] = (self.pos[0] + self.vel[0]) % WIDTH
         self.pos[1] = (self.pos[1] + self.vel[1]) % HEIGHT
-  
+    
+    def collide(self,obj):
+        
+        ans=False #Default answer. Just need to check if it changes.
+        d=dist(self.get_position(),obj.get_position())
+        rt=self.get_radius()+obj.get_radius()
+        if d<=rt:
+            ans=True
+        print ans
+        return ans
+        
+    def get_position(self):
+        #Center is the current object position 
+        return self.pos
+        
+    def get_radius(self):
+        return self.radius
         
 # key handlers to control ship   
 def keydown(key):
@@ -211,7 +235,7 @@ def click(pos):
         started = True
 
 def draw(canvas):
-    global time, started
+    global time, started, lives
     
     # animiate background
     time += 1
@@ -247,6 +271,10 @@ def draw(canvas):
         canvas.draw_image(splash_image, splash_info.get_center(), 
                           splash_info.get_size(), [WIDTH / 2, HEIGHT / 2], 
                           splash_info.get_size())
+    #Verify collisions
+    if group_colision(rockset,shipset)>0:
+        lives-=1
+                          
 
 # timer handler that spawns a rock    
 def rock_spawner():
@@ -257,13 +285,27 @@ def rock_spawner():
         rock_avel = random.random() * .2 - .1
         a_rock = Sprite(rock_pos, rock_vel, 0, rock_avel, asteroid_image, asteroid_info)
         rockset.add(a_rock)
-        numrocks+=1
+        numrocks=len(rockset) #Will allways have 12 rocks. 
 
-def process_sprite_group(sprite_group, canvas):
+def process_sprite_group(sprite_group,canvas):
+        for s in sprite_group:
+    		s.draw(canvas)
+			s.update()
+
+def group_colision(set1,set2):
     
-    for s in sprite_group:
-        s.draw(canvas)
-        s.update()
+#I'll try to implement only one function to collisions. In fact, there's no difference
+#between a set of rocks, missiles or ships. Just need to create a new set with a ship.That will also provide support to multiple ship's
+    ns=set()
+    ns.update(set1)
+    numcollisions=0
+    for r in ns:
+        for s in set2:
+            if r.collide(s)==True:
+                set1.remove(r)
+                numcollisions+=1
+    return numcollisions
+
 
 # initialize stuff
 frame = simplegui.create_frame("Asteroids", WIDTH, HEIGHT)
