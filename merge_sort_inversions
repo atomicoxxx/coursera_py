@@ -1,54 +1,85 @@
-count_i=0
-def merge(left,right): 
-  """Assumes left and right are sorted lists. 
-Returns a new sorted list containing the same elements 
-as (left + right) would contain.""" 
-  global count_i
-  result = [] 
-  i,j = 0, 0 
-  while i < len(left) and j < len(right): 
-      if left[i] <= right[j]: 
-         result.append(left[i]) 
-         i = i + 1
-      else: 
-         result.append(right[j]) 
-         j = j + 1 
-         count_i+=1               
-  while (i < len(left)): 
-      result.append(left[i]) 
-      i = i + 1
-      count_i+=1              
-  while (j < len(right)): 
-      result.append(right[j]) 
-      j = j + 1
-                     
-  return result 
-             
-def mergesort(L): 
-   """Returns a new sorted list with the same elements as L""" 
-   print L 
-   if len(L) < 2: 
-      return L[:] 
-   else: 
-      middle = len(L) // 2 
-      left = mergesort(L[:middle]) 
-      right = mergesort(L[middle:]) 
-      together = merge(left,right) 
-      print 'merged', together
-      return together 
-    
-def brute_force_inversions(a):
-    """ Brute force algorithm to count number of inversions in a list a"""
-    no_of_inversions=0
-    for i in range(len(a)):
-        for j in range(i+1,len(a)):
-            if a[i] > a[j]:
-                no_of_inversions+=1
-    return no_of_inversions
+import time
 
-#Test case. There are 590 inversions
-j=[ 37, 7, 2, 14, 35, 47, 10, 24, 44, 17, 34, 11, 16, 48, 1, 39, 6, 33, 43, 26, 40, 4, 28, 5, 38, 41, 42, 12, 13, 21, 29, 18, 3, 19, 0, 32, 46, 27, 31, 25, 15, 36, 20, 8, 9, 49, 22, 23, 30, 45]
+class  mslista:
+    def __init__(self, lista):
+        self.uolista=lista
+        self.cinv=0 #count inversions for mergsort
+        self.bcinv=0 #count inversions for bruteforce
+        self.timebf=0
+        self.timems=0
+        
+    def ordenalista(self):
+         #self.ordlista=[]
+         self.ordlista=self.mergesort(self.uolista)
+        
+    def getordlista(self):
+        return self.ordlista
+        
+    def getinversions(self):
+        time1=0
+        time2=0
+        time1=time.time()
+        self.brutforce()
+        self.timebf=time.time()-time1
+        time2=time.time()
+        #self.ordenalista()
+        timems=time.time()-time2
+        return self.cinv #,self.bcinv,self.timebf, self.timems
     
-mergesort(j)
-print brute_force_inversions(j), count_i
- 
+    def brutforce(self):
+        """ Brute force algorithm to count number of inversions in a list a"""
+        self.bcinv=0 #to prevent call uneeded. If we call twice, and do not init var here, will get value dobled. 
+        time1=time.time()
+        for i in range(len(self.uolista)):
+            for j in range(i+1,len(self.uolista)):
+                if self.uolista[i] > self.uolista[j]:
+                    self.bcinv+=1
+
+        
+    def merge(self,left,right):
+        """Assumes left and right are sorted lists. 
+        Returns a new sorted list containing the same elements 
+        as (left + right) would contain.""" 
+        result = [] 
+        i,j = 0, 0 
+        while i < len(left) and j < len(right): 
+            if left[i] <= right[j]: 
+                result.append(left[i]) 
+                i = i + 1
+            else: 
+                self.cinv+=len(left[i:]) 
+                result.append(right[j]) 
+                j = j + 1 
+        while (i < len(left)): 
+            result.append(left[i]) 
+            i = i + 1
+      
+        while (j < len(right)): 
+            result.append(right[j]) 
+            j = j + 1
+        return result
+        
+    def mergesort(self,lista):
+        """Returns a new sorted list with the same elements as L"""
+        if len(lista) < 2: 
+            return lista[:] 
+        else: 
+            middle = len(lista) // 2 
+            left = self.mergesort(lista[:middle]) 
+            right = self.mergesort(lista[middle:]) 
+            together = self.merge(left,right) 
+            #print 'merged', together
+            return together 
+        
+#Test case.
+#j=[6,5,4,3,2,1]
+f=open("c:/netdados/Coursera/da/IntegerArray.txt",'r')
+lst=[]   
+for line in f:
+    lst.append(int(line))
+f.close()    
+z=mslista(lst)
+print len(lst)," Elementos a classificar"
+print "working"
+print z.getinversions()
+print "Done"
