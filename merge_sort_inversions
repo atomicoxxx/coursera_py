@@ -9,25 +9,24 @@ class  mslista:
         self.timems=0
         
     def ordenalista(self):
-         #self.ordlista=[]
+         time1=0
+         time2=0
+         time1=time.time()
+         self.ordlista=[]
          self.ordlista=self.mergesort(self.uolista)
-        
+         time2=time.time()
+         self.timems=time2-time1
     def getordlista(self):
         return self.ordlista
         
     def getinversions(self):
-        time1=0
-        time2=0
-        time1=time.time()
-        self.brutforce()
-        self.timebf=time.time()-time1
-        time2=time.time()
-        #self.ordenalista()
-        timems=time.time()-time2
-        return self.cinv #,self.bcinv,self.timebf, self.timems
+
+        self.ordenalista()
+        return str(self.cinv) + " inversions. Elapsed Time (secs):" + str(self.timems)
     
     def brutforce(self):
-        """ Brute force algorithm to count number of inversions in a list a"""
+        """ Brute force algorithm to count number of inversions in a list a. It takes a long time, please use carefully"""
+        
         self.bcinv=0 #to prevent call uneeded. If we call twice, and do not init var here, will get value dobled. 
         time1=time.time()
         for i in range(len(self.uolista)):
